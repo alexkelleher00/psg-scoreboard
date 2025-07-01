@@ -8,7 +8,7 @@ class ScoreboardApp:
     def __init__(self, root):
         self.root = root
         self.root.title("PSG ScoreBoard")
-        self.root.state('zoomed')  # Fullscreen
+        self.root.attributes('-fullscreen', True)  # Fullscreen
         self.root.bind("<Configure>", self.resize_fonts)
 
         # Configure grid for layout
