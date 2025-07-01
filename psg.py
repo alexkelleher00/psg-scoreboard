@@ -8,10 +8,10 @@ class ScoreboardApp:
     def __init__(self, root):
         self.root = root
         self.root.title("PSG ScoreBoard")
-        self.root.state('zoomed')  # Makes the window fill the screen
+        self.root.state('zoomed')  # Fullscreen
         self.root.bind("<Configure>", self.resize_fonts)
 
-        # Root grid expansion
+        # Configure grid for layout
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_columnconfigure(0, weight=3)
         self.root.grid_columnconfigure(1, weight=1)
@@ -20,7 +20,7 @@ class ScoreboardApp:
         self.base_font = tkFont.Font(family="Arial", size=12)
         self.label_font = tkFont.Font(family="Arial", size=14, weight="bold")
 
-        # Fixed list of teams and games
+        # Teams and games
         self.teams = [
             "The Killers (JP/Teo)", "Foo Fighters (Sam/Ecap)",
             "Arctic Monkeys (Jack/Blango)", "Greenday (Isaiah/Jake)",
@@ -41,40 +41,55 @@ class ScoreboardApp:
         self.create_ui()
 
     def create_ui(self):
+        # Left frame for game input
         self.game_frame = tk.Frame(self.root)
         self.game_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
-        # Configure internal grid of game_frame
+        # Internal grid config
         for i in range(len(self.games) + 1):
             self.game_frame.grid_rowconfigure(i, weight=1)
         for j in range(len(self.teams) + 1):
             self.game_frame.grid_columnconfigure(j, weight=1)
 
+        # Top row: team names
         for col, team in enumerate(self.teams):
             team_label = tk.Label(self.game_frame, text=team, font=self.base_font, relief="solid")
             team_label.grid(row=0, column=col + 1, padx=5, pady=5, sticky="nsew")
 
         self.create_game_slots()
 
+        # Update button
         update_button = tk.Button(self.root, text="Update Scores", font=self.label_font, command=self.update_scores)
         update_button.grid(row=2, column=0, columnspan=2, pady=10, sticky="ew")
 
+        # Right frame for total scores leaderboard
         self.total_score_frame = tk.Frame(self.root)
         self.total_score_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
 
-        self.total_score_frame.grid_columnconfigure(0, weight=1)
-        self.total_score_frame.grid_columnconfigure(1, weight=2)
+        self.total_score_frame.grid_columnconfigure(0, weight=1)  # place #
+        self.total_score_frame.grid_columnconfigure(1, weight=3)  # team name
+        self.total_score_frame.grid_columnconfigure(2, weight=2)  # score
 
-        self.place_labels = {}
+        # Header label
+        title_label = tk.Label(self.total_score_frame, text="Total Scores", font=self.label_font)
+        title_label.grid(row=0, column=0, columnspan=3, pady=(0, 20), sticky="nsew")
+
+        # Scoreboard labels
         self.total_score_labels = {}
+        for i in range(len(self.teams)):
+            place_label = tk.Label(self.total_score_frame, text=f"{i+1}:", font=self.label_font)
+            place_label.grid(row=i + 1, column=0, padx=5, pady=5, sticky="nsew")
 
-        for i, team in enumerate(self.teams):
-            self.place_labels[team] = tk.Label(self.total_score_frame, text=f"{i+1}: ", font=self.label_font)
-            self.place_labels[team].grid(row=i+1, column=0, padx=5, pady=5, sticky="nsew")
+            team_label = tk.Label(self.total_score_frame, text="", font=self.base_font, relief="solid")
+            team_label.grid(row=i + 1, column=1, padx=5, pady=5, sticky="nsew")
 
-            label = tk.Label(self.total_score_frame, text=f"{team}: {self.totalScore[team]}", font=self.base_font, relief="solid")
-            label.grid(row=i+1, column=1, padx=10, pady=5, sticky="nsew")
-            self.total_score_labels[team] = label
+            score_label = tk.Label(self.total_score_frame, text="", font=self.base_font, relief="solid")
+            score_label.grid(row=i + 1, column=2, padx=5, pady=5, sticky="nsew")
+
+            self.total_score_labels[f"team_{i}"] = team_label
+            self.total_score_labels[f"score_{i}"] = score_label
+
+        self.display_scores()
 
     def create_game_slots(self):
         for i, game in enumerate(self.games):
@@ -99,7 +114,7 @@ class ScoreboardApp:
     def update_scores(self):
         for i, team in enumerate(self.teams):
             self.totalScore[team] = 0
-            for j, _ in enumerate(self.scores[team]):
+            for j in range(len(self.games)):
                 score = self.score_entries[j][i].get()
                 if score:
                     try:
@@ -115,11 +130,9 @@ class ScoreboardApp:
 
     def display_scores(self):
         sorted_teams = sorted(self.teams, key=lambda t: self.totalScore[t], reverse=True)
-
         for index, team in enumerate(sorted_teams):
-            self.place_labels[team].grid(row=index + 1, column=0, padx=5, pady=5, sticky="nsew")
-            self.total_score_labels[team].config(text=f"{team}: {self.totalScore[team]}")
-            self.total_score_labels[team].grid(row=index + 1, column=1, padx=10, pady=5, sticky="nsew")
+            self.total_score_labels[f"team_{index}"].config(text=team)
+            self.total_score_labels[f"score_{index}"].config(text=str(self.totalScore[team]))
 
     def save_scores(self):
         with open("scoreboard_data.json", "w") as file:
@@ -136,7 +149,7 @@ class ScoreboardApp:
     def resize_fonts(self, event):
         width = self.root.winfo_width()
         height = self.root.winfo_height()
-        new_size = max(10, min(16, int(min(width, height) / 60)))  # Conservative scaling
+        new_size = max(10, min(16, int(min(width, height) / 60)))
         self.base_font.configure(size=new_size)
         self.label_font.configure(size=new_size + 2)
 
