@@ -9,12 +9,12 @@ class ScoreboardApp:
         self.root.title("PSG ScoreBoard")
 
         # Fixed list of teams and games
-        self.teams = ["Team A", "Team B", "Team C", "Team D", "Team E", "Team F", "Team G", "Team H"]
-        self.games = ["Volleyball", "Treasure Hunt", 
-                      "Pickleball", "3 Point Contest", 
-                      "Bumper Ball", "Waiter Games",
-                      "Water Game", "Marbles",
-                       "Sling Shot", "Obstacle Course"]
+        self.teams = ["The Killers (JP/Teo)", "Foo Fighters (Sam/Ecap)", "Arctic Monkeys (Jack/Blango)", "Greenday (Isaiah/Jake)", "Cold  Play (Mello/Kells)", "All American Rejects (HL/TBD)", "Fallout Boys (Jesse/OD)"]
+        self.games = ["Volleyball", "Toe Jam", 
+                      "Knocker Ball", "Pickle Ball", 
+                      "Treasure Hunt", "Watering Hole",
+                      "ChipShot", "3 Point Contest",
+                       "Dodgeball", "Gauntlet"]
         
         self.score_entries = []
         # Initialize a dictionary to hold the scores for each team and game (10 games)
