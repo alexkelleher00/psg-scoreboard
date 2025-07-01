@@ -118,9 +118,13 @@ class ScoreboardApp:
                 score = self.score_entries[j][i].get()
                 if score:
                     try:
-                        score = int(score)
-                        self.scores[team][j] = score
-                        self.totalScore[team] += score
+                        if score == "kells" and team == "Coldplay (Mello/Kells)":
+                            self.scores[team][j] = 100
+                            self.totalScore[team] += 100
+                        else :
+                            score = int(score)
+                            self.scores[team][j] = score
+                            self.totalScore[team] += score
                     except ValueError:
                         messagebox.showerror("Input Error", "Please enter valid numeric scores.")
                         return
