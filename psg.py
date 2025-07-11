@@ -3,6 +3,7 @@ from tkinter import messagebox
 import tkinter.font as tkFont
 import json
 import os
+from PIL import Image, ImageTk
 
 class ScoreboardApp:
     def __init__(self, root):
@@ -15,7 +16,6 @@ class ScoreboardApp:
         self.root.grid_columnconfigure(0, weight=3)
         self.root.grid_columnconfigure(1, weight=1)
 
-        # Slightly smaller fonts
         self.base_font = tkFont.Font(family="Arial", size=8)
         self.label_font = tkFont.Font(family="Arial", size=9, weight="bold")
 
@@ -80,6 +80,27 @@ class ScoreboardApp:
             self.total_score_labels[f"team_{i}"] = team_label
             self.total_score_labels[f"score_{i}"] = score_label
 
+        tournament_points = ["10", "8", "6", "5", "4", "3", "2"]
+        round_robin_points = ["10", "8", "6", "5", "4", "3", "2"]
+
+        tk.Label(self.total_score_frame, text="\nRound Robin Pointing:", font=self.label_font).grid(row=10, column=0, columnspan=3, sticky="w")
+        for i in range(7):
+            text = f"Place {i+1}: {tournament_points[i]}"
+            tk.Label(self.total_score_frame, text=text, font=self.base_font).grid(row=11+i, column=0, columnspan=3, sticky="w")
+
+        tk.Label(self.total_score_frame, text="\nTournament Pointing:", font=self.label_font).grid(row=18, column=0, columnspan=3, sticky="w")
+        for i in range(7):
+            text = f"Place {i+1}: {round_robin_points[i]}"
+            tk.Label(self.total_score_frame, text=text, font=self.base_font).grid(row=19+i, column=0, columnspan=3, sticky="w")
+
+        # Load and display the bracket image
+        image_path = "bracket1.png"  # Ensure bracket.png is in the same folder
+        pil_image = Image.open(image_path).resize((400, 399))  # Resize as needed
+        self.tk_image = ImageTk.PhotoImage(pil_image)
+
+        # Place image in UI (e.g., row 27 in total_score_frame)
+        image_label = tk.Label(self.total_score_frame, image=self.tk_image)
+        image_label.grid(row=26, column=0, columnspan=3, pady=3, sticky="w")
         self.display_scores()
 
     def create_game_slots(self):
@@ -89,7 +110,7 @@ class ScoreboardApp:
 
             row_entries = []
             for j, team in enumerate(self.teams):
-                score_entry = tk.Entry(self.game_frame, font=self.base_font)
+                score_entry = tk.Entry(self.game_frame, font=self.base_font, justify="center")
                 score_entry.grid(row=i + 1, column=j + 1, padx=2, pady=3, sticky="nsew")
                 row_entries.append(score_entry)
             self.score_entries.append(row_entries)
