@@ -16,8 +16,8 @@ class ScoreboardApp:
         self.root.grid_columnconfigure(0, weight=3)
         self.root.grid_columnconfigure(1, weight=1)
 
-        self.base_font = tkFont.Font(family="Arial", size=8)
-        self.label_font = tkFont.Font(family="Arial", size=9, weight="bold")
+        self.base_font = tkFont.Font(family="Arial", size=7)
+        self.label_font = tkFont.Font(family="Arial", size=8, weight="bold")
 
         self.teams = [
             "The Killers (JP/Teo)", "Foo Fighters (Sam/Ecap)",
@@ -26,9 +26,9 @@ class ScoreboardApp:
             "Fallout Boys (Jesse/OD)"
         ]
         self.games = [
-            "Volleyball", "Toe Jam", "Knocker Ball", "Pickle Ball",
+            "DodgenBall", "Knocker Ball", "Volley Ball", "Toe Jam", "Pickle Ball",
             "Treasure Hunt", "Watering Hole", "ChipShot", "3 Point Contest",
-            "Dodgeball", "Gauntlet"
+            "Gauntlet"
         ]
 
         self.score_entries = []
@@ -49,12 +49,12 @@ class ScoreboardApp:
 
         for col, team in enumerate(self.teams):
             team_label = tk.Label(self.game_frame, text=team, font=self.base_font, relief="solid")
-            team_label.grid(row=0, column=col + 1, padx=2, pady=3, sticky="nsew")
+            team_label.grid(row=0, column=col + 1, padx=1, pady=2, sticky="nsew")
 
         self.create_game_slots()
 
         update_button = tk.Button(self.root, text="Update Scores", font=self.label_font, command=self.update_scores)
-        update_button.grid(row=2, column=0, columnspan=2, pady=10, sticky="ew")
+        update_button.grid(row=2, column=0, columnspan=2, pady=8, sticky="ew")
 
         self.total_score_frame = tk.Frame(self.root)
         self.total_score_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
@@ -64,54 +64,46 @@ class ScoreboardApp:
         self.total_score_frame.grid_columnconfigure(2, weight=2)
 
         title_label = tk.Label(self.total_score_frame, text="Total Scores", font=self.label_font)
-        title_label.grid(row=0, column=0, columnspan=3, pady=(0, 20), sticky="nsew")
+        title_label.grid(row=0, column=0, columnspan=3, pady=(0, 15), sticky="nsew")
 
         self.total_score_labels = {}
         for i in range(len(self.teams)):
             place_label = tk.Label(self.total_score_frame, text=f"{i+1}:", font=self.label_font)
-            place_label.grid(row=i + 1, column=0, padx=2, pady=3, sticky="nsew")
+            place_label.grid(row=i + 1, column=0, padx=1, pady=2, sticky="nsew")
 
             team_label = tk.Label(self.total_score_frame, text="", font=self.base_font, relief="solid")
-            team_label.grid(row=i + 1, column=1, padx=2, pady=3, sticky="nsew")
+            team_label.grid(row=i + 1, column=1, padx=1, pady=2, sticky="nsew")
 
             score_label = tk.Label(self.total_score_frame, text="", font=self.base_font, relief="solid")
-            score_label.grid(row=i + 1, column=2, padx=2, pady=3, sticky="nsew")
+            score_label.grid(row=i + 1, column=2, padx=1, pady=2, sticky="nsew")
 
             self.total_score_labels[f"team_{i}"] = team_label
             self.total_score_labels[f"score_{i}"] = score_label
 
-        tournament_points = ["10", "8", "6", "5", "4", "3", "2"]
+        tournament_points = ["10", "8", "5", "5", "3", "3", "3"]
         round_robin_points = ["10", "8", "6", "5", "4", "3", "2"]
 
-        tk.Label(self.total_score_frame, text="\nRound Robin Pointing:", font=self.label_font).grid(row=10, column=0, columnspan=3, sticky="w")
+        tk.Label(self.total_score_frame, text="\nTournament Pointing:", font=self.label_font).grid(row=10, column=0, columnspan=3, sticky="w")
         for i in range(7):
             text = f"Place {i+1}: {tournament_points[i]}"
             tk.Label(self.total_score_frame, text=text, font=self.base_font).grid(row=11+i, column=0, columnspan=3, sticky="w")
 
-        tk.Label(self.total_score_frame, text="\nTournament Pointing:", font=self.label_font).grid(row=18, column=0, columnspan=3, sticky="w")
+        tk.Label(self.total_score_frame, text="\Round Robin Pointing:", font=self.label_font).grid(row=18, column=0, columnspan=3, sticky="w")
         for i in range(7):
             text = f"Place {i+1}: {round_robin_points[i]}"
             tk.Label(self.total_score_frame, text=text, font=self.base_font).grid(row=19+i, column=0, columnspan=3, sticky="w")
 
-        # Load and display the bracket image
-        image_path = "bracket1.png"  # Ensure bracket.png is in the same folder
-        pil_image = Image.open(image_path).resize((400, 399))  # Resize as needed
-        self.tk_image = ImageTk.PhotoImage(pil_image)
-
-        # Place image in UI (e.g., row 27 in total_score_frame)
-        image_label = tk.Label(self.total_score_frame, image=self.tk_image)
-        image_label.grid(row=26, column=0, columnspan=3, pady=3, sticky="w")
         self.display_scores()
 
     def create_game_slots(self):
         for i, game in enumerate(self.games):
             game_label = tk.Label(self.game_frame, text=game, font=self.base_font, relief="solid")
-            game_label.grid(row=i + 1, column=0, padx=2, pady=3, sticky="nsew")
+            game_label.grid(row=i + 1, column=0, padx=1, pady=2, sticky="nsew")
 
             row_entries = []
             for j, team in enumerate(self.teams):
                 score_entry = tk.Entry(self.game_frame, font=self.base_font, justify="center")
-                score_entry.grid(row=i + 1, column=j + 1, padx=2, pady=3, sticky="nsew")
+                score_entry.grid(row=i + 1, column=j + 1, padx=1, pady=2, sticky="nsew")
                 row_entries.append(score_entry)
             self.score_entries.append(row_entries)
 
@@ -165,7 +157,7 @@ class ScoreboardApp:
     def resize_fonts(self, event):
         width = self.root.winfo_width()
         height = self.root.winfo_height()
-        new_size = max(7, min(12, int(min(width, height) / 90)))
+        new_size = max(6, min(10, int(min(width, height) / 100)))
         self.base_font.configure(size=new_size)
         self.label_font.configure(size=new_size + 1)
 
